@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const api_key = urlParams.get('DEVELOPMENT_API_KEY');
     document.getElementById('contenido-enviado').textContent = contenido;
 
-    const api_url = "https://la2.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
+    let api_url = "https://la2.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
     api_url += contenido;
     api_url += '?api_key=' + api_key;
     fetch(api_url)
