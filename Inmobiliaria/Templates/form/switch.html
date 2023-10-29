@@ -1,8 +1,0 @@
-{% load widget_tweaks %}
-<div class="form-check form-switch">
-    {{ input }}
-    <label class="form-check-label" for="{{ label }}">{{ label }}</label>
-    {% if input.errors %}
-        <span class="invalid-feedback">{{ input.errors|striptags }}</span>
-    {% endif %}
-</div>
