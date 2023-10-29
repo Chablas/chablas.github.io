@@ -1,0 +1,51 @@
+{% extends 'layouts/intranet.html' %}
+
+{% load static %}
+
+{% block title%} Roles {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with icon="fa-solid fa-pencil" title=title routes=routes %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="row">
+                    <div class="col">
+                        <form method="post">
+                            {% csrf_token %} 
+                            <div class="card-body">
+                                {% include "form/input.html" with label="" input=form.id %}
+                                {% include "form/select.html" with label="Modulo a asignar" input=form.modulo_to_allocate %}
+                            </div>
+                            <div class="card-footer text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                    asignar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col">
+                        <form method="post">
+                            {% csrf_token %} 
+                            <div class="card-body">
+                                {% include "form/input.html" with label="" input=form.id %}
+                                {% include "form/select.html" with label="Modulo a desasignar" input=form.modulo_to_deallocate %}
+                            </div>
+                            <div class="card-footer text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-ban" aria-hidden="true"></i>
+                                    Desasignar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

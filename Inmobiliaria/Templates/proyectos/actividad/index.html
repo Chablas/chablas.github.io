@@ -1,0 +1,188 @@
+{% extends 'layouts/intranet.html'%}
+{% load static %}
+
+{% block title%} Actividades {% endblock title%}
+
+{% block extra_css %} 
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+{% endblock extra_css %}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with routes=routes title=title %}
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col text-start">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button id="prev" class="btn btn-primary" onclick="return moveToNextOrPrevRange(-1)"></button>
+                        <button id="next" class="btn btn-primary" onclick="return moveToNextOrPrevRange(1)"></button>
+                    </div>
+                    <button id="next" class="btn btn-primary" onclick="return onClickTodayBtn()">Mes Actual</button>
+                    <a class="btn btn-primary" href="{% url 'proyectos:actividadesCreate' proyecto=proyecto proyecto_id=proyecto_id%}">
+                        <i class="fas fa-plus" aria-hidden="true"></i> Nuevo Evento
+                    </a>
+                </div>
+                <div class="col"><h3 class="text-end" id="current"></h3></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="calendar" style="height: 600px;"></div>
+        </div>
+    </div>
+
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" id="Vista_Evento">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form" >
+                        <div class="activity-form">
+                            <div class="mb-3"> <h3 id="title"></h3> </div>
+                            <div class="mb-3 d-flex">
+                                <div class="col">
+                                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                    <input type="date" class="form-control w-100" id="fechaInicio" readonly>
+                                </div>
+                                <div class="col mx-2">
+                                    <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                    <input type="date" class="form-control w-100" id="fechaFin" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-info-circle"></i>
+                                <p>Tipo de Actividad</p>
+                            </div>
+                            <div class="mb-3">
+                                <i class="fas fa-project-diagram"></i>
+                                <p id="proyecto">{{ proyecto }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="btn-editar" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a id="btn-incidencia"class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Incidencias
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+        {% include 'common/pagination.html' %}
+    {% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+    <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+    {{ events|json_script }}
+    <script>
+        $(document).ready(function(){
+            $('body').on('click', '.toastui-calendar-weekday-event-block', function(){
+                const event = calendar.getEvent($(this).attr('data-event-id'), $(this).attr('data-calendar-id'));
+
+                document.getElementById('title').innerHTML= event.title.toUpperCase();
+                
+                const id = event.id.split('-', 2)[1]
+
+                var urlEditar = "{% url 'proyectos:actividadesUpdate' proyecto=proyecto proyecto_id=proyecto_id actividad_id=123 %}"
+                var urlIncidencias = "{% url 'proyectos:actividadesUpdate' proyecto=proyecto proyecto_id=proyecto_id actividad_id=123 %}"
+                                
+                document.getElementById('btn-editar').href = urlEditar.replace('123', id);
+                document.getElementById('btn-incidencia').href = urlIncidencias.replace('123', id);
+                console.log(event.start.getMonth(), event.end.getMonth())
+
+                const startMonth = event.start.getMonth() + 1
+                const endMonth = event.end.getMonth() + 1
+
+                $('#fechaInicio').val(event.start.getFullYear()+'-'+startMonth.toString().padStart(2, "0")+'-'+event.start.getDate().toString().padStart(2, "0"));
+                $('#fechaFin').val(event.end.getFullYear()+'-'+endMonth.toString().padStart(2, "0")+'-'+event.end.getDate().toString().padStart(2, "0"));
+
+                $('#Vista_Evento').modal('show');
+            })
+        })
+
+        moment.locale('es')
+
+        const months  = moment.months()
+        const Calendar = tui.Calendar;
+
+        const calendar = new Calendar(document.getElementById('calendar'), {
+            usageStatistics: false,
+            defaultView: 'month',
+            isReadOnly: true,
+            month: {
+                dayNames: [
+                    'Domingo',
+                    'Lunes',
+                    'Martes',
+                    'Miercoles',
+                    'Jueves',
+                    'Viernes',
+                    'Sábado',
+                    'Domingo'
+                ]
+            },
+            timezone: {
+                zones: [
+                    {
+                        timezoneName: 'America/Lima',
+                        displayLabel: 'Lima',
+                    }
+                ]
+            },
+            calendars: [
+                {
+                    id: 'cal1',
+                    name: 'Personal',
+                    backgroundColor: '#03bd9e',
+                },
+                {
+                    id: 'cal2',
+                    name: 'Work',
+                    backgroundColor: '#00a9ff',
+                },
+            ],
+        });
+        
+        updateMonth();
+
+        const events = JSON.parse(document.currentScript.previousElementSibling.textContent);
+
+        calendar.createEvents(events);
+
+        function moveToNextOrPrevRange(offset) {
+           
+            if (offset === -1) { calendar.prev(); } 
+            if (offset === 1)  { calendar.next(); }
+
+            updateMonth();
+        }
+
+        function updateMonth() {
+            const prev = calendar.getDate().getMonth() - 1 < 0 ? 11 : calendar.getDate().getMonth() - 1;
+            const next = calendar.getDate().getMonth() + 1 > 11 ? 0 : calendar.getDate().getMonth() + 1;
+
+            document.getElementById('prev').innerHTML=months[prev].toUpperCase();
+            document.getElementById('next').innerHTML=months[next].toUpperCase();
+            document.getElementById('current').innerHTML=`${months[calendar.getDate().getMonth()].toUpperCase()} - ${calendar.getDate().getFullYear()}`;
+        }
+
+        function onClickTodayBtn() {
+            calendar.today();
+            updateMonth();
+        }
+    </script>
+
+{% endblock extra_js %}
+
+

@@ -1,0 +1,56 @@
+{% extends 'layouts/intranet.html' %}
+
+{% load static %}
+
+{% block title%} Logs {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with icon="fa-solid fa-eye" title=title routes=routes %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            {% include "form/input.html" with label="Nro.Documento" input=form.usuario_id %}
+                        </div>
+                        <div class="col">
+                            {% include "form/input.html" with label="Usuario" input=form.usuario %}
+                        </div>
+                        <div class="col-2">
+                            {% include "form/input.html" with type="date" label="Fecha" input=form.fecha %}
+                        </div>
+                        <div class="col-2">
+                            {% include "form/input.html" with type="time" label="Hora" input=form.hora %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1">
+                            {% include "form/input.html" with label="Acción" input=form.accion %}
+                        </div>
+                        <div class="col-1">
+                            {% include "form/input.html" with label="Cliente IP" input=form.cliente_ip %}
+                        </div>
+                        <div class="col-3">
+                            {% include "form/input.html" with label="Endpoint" input=form.endpoint %}
+                        </div>
+                        <div class="col-7">
+                            {% include "form/input.html" with label="Navegador" input=form.navegador %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            {% include "form/input.html" with label="Datos de entrada" input=form.datos_entrada %}
+                        </div>
+                        <div class="col-6">
+                            {% include "form/input.html" with label="Datos de salida" input=form.datos_salida %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

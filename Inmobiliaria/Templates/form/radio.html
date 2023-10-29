@@ -1,0 +1,11 @@
+{% load widget_tweaks %}
+<div class="form-group">
+    <fieldset>
+        <legend class="h6">{{ label }}</legend>
+        {% render_field input class+="form-check" %}
+        {{ input }}
+        {% if input.errors %}
+            <span class="invalid-feedback">{{ input.errors|striptags }}</span>
+        {% endif %}
+    </fieldset>
+</div>

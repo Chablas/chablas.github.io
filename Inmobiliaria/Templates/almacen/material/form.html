@@ -1,0 +1,47 @@
+{% extends 'layouts/intranet.html' %}
+
+{% load static %}
+
+{% block title%} Categorias {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with icon="fa-solid fa-pencil" title=title routes=routes %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <form method="post">
+                    {% csrf_token %} 
+                    <div class="card-body">
+
+                        {% include "form/input.html" with label="Nombre" input=form.nombre %}
+                        
+                        <div class="row">
+                            <div class="col">
+                                {% include "form/select.html" with label="Unidad Medida" input=form.unidad_medida_id %}
+                            </div>
+                            <div class="col">
+                                {% include "form/select.html" with label="Categoria" input=form.categoria_id %}
+                            </div>
+                        </div>
+
+                        {% include "form/input.html" with label="Descripción" input=form.descripcion %}
+
+                        {% if form.estado %}
+                            {% include "form/checkbox.html" with label="Estado" input=form.estado %}
+                        {% endif %}
+
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

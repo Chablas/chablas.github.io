@@ -1,0 +1,93 @@
+{% extends 'layouts/intranet.html'%}
+{% load static %}
+
+{% block title%} Usuarios {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with title="Independientes" %}
+    
+    <div class="card border-0 shadow">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <div class="dropdown">
+                        <a class="btn btn-gray-800 d-inline-flex align-items-center me-2 dropdown-toggle" href="{% url 'usuarios:independientesCreate' %}">
+                            <i class="fas fa-user-plus fa-xs me-3" aria-hidden="true"></i> Nuevo
+                        </a>
+                    </div>
+                </div>
+                <div class="col">
+                    <form method="get" class="navbar-search form-inline">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="search" name="search" placeholder="Buscar por nombre" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-primary" type="submit" id="button-addon2">
+                                <i class="fas fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded" aria-hidden="true">
+                    <thead class="thead-light">
+                        <tr>
+                            <th id="col" class="border-0 rounded-start">...</th>
+                            <th id="col" class="border-0">Foto</th>
+                            <th id="col" class="border-0">Nro.Documento</th>
+                            <th id="col" class="border-0">Apellidos y Nombres</th>
+                            <th id="col" class="border-0">Correo electrónico</th>
+                            <th id="col" class="border-0">Celular</th>
+                            <th id="col" class="border-0">Rol</th>
+                            <th id="col" class="border-0">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in independientes %}
+                            <tr>
+                                <td> 
+                                    <a href="{% url 'usuarios:independientesUpdate' id=item.id %}" class="text-info fw-bold">
+                                        <i class="fas fa-edit" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                                <td> 
+                                    <a href="{% url 'usuarios:independientesFoto' id=item.id %}" class="text-info fw-bold">
+                                        <i class="fas fa-image" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                                <td class="fw-bold align-items-center">
+                                    {{ item.id }}
+                                </td>
+                                <td>
+                                    {{ item.apellidoPaterno }} {{ item.apellidoMaterno }}, {{ item.nombres }}
+                                </td>
+                                <td>
+                                    {{ item.correo }}
+                                </td>
+                                <td>
+                                    {{ item.celular }}
+                                </td>
+                                <td>
+                                    {{ item.rol.nombre }}
+                                </td>
+                                <td>
+                                    <a href="{% url 'usuarios:independientesEstadoUpdate' id=item.id %}" class="fw-bold {% if item.estado == 'ACTIVO' %} text-success {% else %} text-danger {% endif %}">
+                                        {{ item.estado }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+        {% include 'common/pagination.html' %}
+    {% endif %}
+
+{% endblock content %}

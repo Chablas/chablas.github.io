@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    {% include 'common/head.html'%}  
+
+    <title>{% block title%} {% endblock title %}</title>
+
+    {% block extra_css %}
+    {% endblock extra_css %}
+  </head>
+  <body>
+
+    {% block nav %}
+      {% include 'common/nav.html' %}
+    {% endblock nav %}
+
+    {% block sidebar %}
+      {% include 'common/sidebar.html'%}  
+    {% endblock sidebar %}
+
+    <main class="content" style="min-height: 100vh;">
+      {% include 'common/header.html'%} 
+
+      {% block content %}
+      {% endblock content %}
+      
+    </main>
+   
+    {% include 'common/script.html'%} 
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.level is 40 %}
+          <script>
+            iziToast.show({
+              title: 'ERROR',
+              titleColor: '#FF0000',
+              color: '#FFF',
+              class: 'text-danger',
+              position: 'topRight',
+              message: "{{ message }}"
+            });
+          </script>
+        {% else %}
+          <script>
+            iziToast.show({
+              title: 'Éxito',
+              titleColor: '#1DC74C',
+              color: '#FFF',
+              class: 'text-success',
+              position: 'topRight',
+              message: "{{ message }}"
+            });
+          </script>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </body>
+</html>

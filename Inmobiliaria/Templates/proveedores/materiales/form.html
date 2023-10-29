@@ -1,0 +1,61 @@
+{% extends 'layouts/intranet.html' %}
+
+{% load static %}
+
+{% block title%} Materiales {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with icon="fa-solid fa-pencil" title=title routes=routes %}
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <form method="post">
+                    {% csrf_token %} 
+                    {{ form.management_form }}
+                    <div class="card-body">
+                        {% for f in form %}
+                            <div class="row">
+                                <div class="col">
+                                    {% include "form/input.html" with label="Código" input=f.codigo_proveedor %}
+                                </div>
+                                <div class="col">
+                                    {% include "form/select.html" with label="Categoria" input=f.categoria_id %}
+                                </div>
+                                <div class="col">
+                                    {% include "form/select.html" with label="Unidad de Medida" input=f.unidad_medida_id %}
+                                </div>
+                                <div class="col">
+                                    {% include "form/input.html" with label="Descripcion" input=f.descripcion %}
+                                </div>
+                                <div class="col">
+                                    {% include "form/input.html" with label="Precio Actual" input=f.precio_actual %}
+                                </div>
+                                <div class="col">
+                                    {% include "form/input.html" with label="Cantidad contenedora" input=f.cantidad_contenedora %}
+                                </div>
+                                {% if f.fecha_creacion %}
+                                    <div class="col">
+                                        {% include "form/input.html" with type="date" label="Fecha de Creacion" input=f.fecha_creacion %}
+                                    </div>
+                                {% endif %}
+                                <div class="col">
+                                    {% include "form/input.html" with type="date" label="Fecha de Vencimiento" input=f.fecha_vencimiento %}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

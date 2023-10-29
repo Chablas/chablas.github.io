@@ -1,0 +1,149 @@
+{% extends 'layouts/intranet.html'%}
+
+{% load static %}
+
+{% block title%} Pedidos {% endblock title%}
+
+{% block content %}
+
+    {% include 'common/breadcrumb.html' with icon="fa-solid fa-pencil" title=title routes=routes %}
+    
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card border-0 shadow components-section">
+                <form method="post">
+                    {% csrf_token %} 
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                {% include "form/input.html" with type="date" label="Fecha Atención" input=form.fecha_atencion %}
+                            </div>
+                            <div class="col">
+                                {% include "form/input.html" with label="Descripción" input=form.descripcion %}
+                            </div>
+                        </div>
+                        {% include "form/input.html" with label="Observación" input=form.observacion %}
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-title">Detalles del pedido</div>
+                            </div>
+                            <div class="col">
+                                <div class="text-end">
+                                    <button onclick="return openModal()" type="button" class="btn btn-primary">
+                                        <i class="fas fa-plus fa-xs me-3" aria-hidden="true"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table class="table table-centered table-nowrap mb-0 rounded" aria-hidden="true">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th id="col" class="border-0 rounded-start">Material</th>
+                                            <th id="col" class="border-0">Cantidad Solicitada</th>
+                                            <th id="col" class="border-0">Precio</th>
+                                            <th id="col" class="border-0">Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in detalles %}
+                                            <tr>
+                                                <td>
+                                                    {{ item.material }}
+                                                </td>
+                                                <td>
+                                                    {{ item.cantidad }}
+                                                </td>
+                                                <td>
+                                                    {{ item.precio_unitario }}
+                                                </td>
+                                                <td> 
+                                                    <button 
+                                                        type="button"
+                                                        class="btn btn-link btn-sm m-0 p-0"
+                                                        onclick="return deleteMaterial('{{ proyecto }}', '{{ item.id }}')">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+        {% include 'common/pagination.html' %}
+    {% endif %}
+
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" id="ModalForm">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="return saveMaterial('{{ proyecto }}')">Guardar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+    <script> 
+        function openModal() { $('#ModalForm').modal('show'); }
+
+        function saveMaterial(proyecto) {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'compras:pedidosCreateDetalle' %}",
+                data:{proyecto},
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (response) { console.log(response); }
+            });
+        }
+
+        function deleteMaterial(proyecto, material){
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'compras:pedidosDeleteDetalle' %}",
+                data:{
+                    proyecto,
+                    material
+                },
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (response) { console.log(response); }
+            });
+        }
+    </script>
+{% endblock extra_js %}

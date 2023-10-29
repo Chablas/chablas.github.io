@@ -1,0 +1,30 @@
+<div class="py-4">
+  <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+
+      <li class="breadcrumb-item">
+        <a href="#">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
+        </a>
+      </li>
+      
+      {% for route in routes %}
+        <li class="breadcrumb-item">
+          <a href="{{ route.route }}">{{ route.name }}</a>
+        </li>
+      {% endfor %}
+        
+      <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between w-100 flex-wrap">
+    <div class="mb-3 mb-lg-0">
+      <h1 class="h4">
+        {% if icon is not None %} <i class="{{ icon }}" aria-hidden="true"></i> {% endif %}
+        {{ title }}
+      </h1>
+      <p class="mb-0">{{ subtitle }}</p>
+    </div>
+  </div>
+</div>
